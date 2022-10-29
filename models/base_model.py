@@ -3,13 +3,16 @@ import models
 import uuid
 from datetime import datetime
 
-"""Base Model"""
+"""Base Model Class"""
 
 
 class BaseModel:
-    """BaseModel Class Details"""
+    """
+        BaseModel Class containing public instance attributes and methods
+        This Class defines all common attributes/methods for other classes
+    """
     def __init__(self, *args, **kwargs):
-
+        """Re-creates an instance"""
         if kwargs:
             for key, value in kwargs.items():
                 if key == "created_at" or key == "updated_at":
@@ -25,19 +28,27 @@ class BaseModel:
 
     def __str__(self):
         """Prints in the form: [<class name>] (<self.id>) <self.__dict__>"""
+        class_name = self.__class__.__name__
         tmp = '[{}] ({}) {}'
-        return tmp.format(self.__class__.__name__, self.id, self.__dict__)
+        return tmp.format(class_name, self.id, self.__dict__)
 
     def save(self):
-        """Updates updated_at with current time"""
+        """
+            Updates the public instance attribute (updated_at) with
+            current datetime
+        """
         self.updated_at = datetime.now()
         models.storage.save()
         return
 
     def to_dict(self):
-        """Return a dictionary containing all keys/values of the instance"""
-        new_dictionary = self.__dict__.copy()
-        new_dictionary.update({'__class__': str(self.__class__.__name__)})
-        new_dictionary["created_at"] = self.created_at.isoformat()
-        new_dictionary["updated_at"] = self.updated_at.isoformat()
-        return new_dictionary
+        """
+            Return a dictionary containing all keys/values of the instance
+            of __dict__ of the instance with a __class__ entry and
+            iso-formatted  datetime
+        """
+        new_dict = self.__dict__.copy()
+        new_dict.update({'__class__': str(self.__class__.__name__)})
+        new_dict["created_at"] = self.created_at.isoformat()
+        new_dict["updated_at"] = self.updated_at.isoformat()
+        return new_dict
